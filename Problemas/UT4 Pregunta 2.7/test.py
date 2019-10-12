@@ -44,12 +44,24 @@ class TestClass:
             assert base**exponente == resultado
 
     """
-        Test de un numero aleatorio entre -baseMaxima y baseMaxima elevado a un exponente aleatorio entre -exponenteMaximo y exponenteMaximo
+        Test de un numero aleatorio entre -baseMaxima y 0 elevado a un exponente aleatorio entre -exponenteMaximo y 0
     """
     def test_negativo(self):
         for i in range (iteracionesMaximas):
             base = random.randint(baseMaxima*-1, 0)
             exponente = random.randint(exponenteMaximo*-1, 0)
+            resultado = problemaRecursivo(base,exponente)
+            if(base==0 and exponente < 0):
+                assert None == resultado
+            else:
+                assert (base**exponente == resultado) or (eq(resultado,base**exponente))
+    """
+        Test de un numero aleatorio entre -baseMaxima y baseMaxima elevado a un exponente aleatorio entre -exponenteMaximo y exponenteMaximo
+    """
+    def test_completo(self):
+        for i in range (iteracionesMaximas):
+            base = random.randint(baseMaxima*-1, baseMaxima)
+            exponente = random.randint(exponenteMaximo*-1, exponenteMaximo)
             resultado = problemaRecursivo(base,exponente)
             if(base==0 and exponente < 0):
                 assert None == resultado
