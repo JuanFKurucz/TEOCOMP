@@ -18,7 +18,7 @@ class TestClass:
         base = 0
         for i in range (iteracionesMaximas):
             exponente = random.randint(0, exponenteMaximo)
-            resultado = problemaRecursivo(base,exponente)
+            resultado = potenciacionOptimaRecurisva(base,exponente)
             assert resultado == base**exponente
 
     """
@@ -28,7 +28,7 @@ class TestClass:
         base = 1
         for i in range (iteracionesMaximas):
             exponente = random.randint(0, exponenteMaximo)
-            resultado = problemaRecursivo(base,exponente)
+            resultado = potenciacionOptimaRecurisva(base,exponente)
             assert resultado == base**exponente
 
     """
@@ -38,7 +38,7 @@ class TestClass:
         for i in range (iteracionesMaximas):
             base = random.randint(0, baseMaxima)
             exponente = random.randint(0, exponenteMaximo)
-            resultado = problemaRecursivo(base,exponente)
+            resultado = potenciacionOptimaRecurisva(base,exponente)
             assert base**exponente == resultado
 
     """
@@ -48,7 +48,7 @@ class TestClass:
         for i in range (iteracionesMaximas):
             base = random.randint(baseMaxima*-1, 0)
             exponente = random.randint(exponenteMaximo*-1, 0)
-            resultado = problemaRecursivo(base,exponente)
+            resultado = potenciacionOptimaRecurisva(base,exponente)
             if(base==0 and exponente < 0):
                 assert None == resultado
             else:
@@ -60,7 +60,7 @@ class TestClass:
         for i in range (iteracionesMaximas):
             base = random.randint(baseMaxima*-1, baseMaxima)
             exponente = random.randint(exponenteMaximo*-1, exponenteMaximo)
-            resultado = problemaRecursivo(base,exponente)
+            resultado = potenciacionOptimaRecurisva(base,exponente)
             if(base==0 and exponente < 0):
                 assert None == resultado
             else:
