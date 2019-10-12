@@ -1,4 +1,8 @@
 def problemaRecursivo(base,exponente):
+    if exponente < 0:
+        if base == 0:
+            return None
+        return 1 / problemaRecursivo(base,exponente*-1)
     if exponente == 1:
         return base
     elif exponente == 0:
