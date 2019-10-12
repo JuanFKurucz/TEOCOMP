@@ -1,0 +1,12 @@
+def problemaRecursivo(base,exponente):
+    if exponente == 1:
+        return base
+    if exponente % 2 != 0:
+        exponente-=1
+        return base * problemaRecursivo(base,exponente)
+    else:
+        exponente/=2
+        return problemaRecursivo(base,exponente) * problemaRecursivo(base,exponente)
+
+print (problemaRecursivo(2,7))
+print (problemaRecursivo(2,8))
