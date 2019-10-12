@@ -1,3 +1,7 @@
+"""
+    Algoritmo que calcula la potencia de una base real
+    con un exponente entero, con orden log(e)
+"""
 def potenciacionOptimaRecurisva(base,exponente):
     if exponente < 0:
         if base == 0:
