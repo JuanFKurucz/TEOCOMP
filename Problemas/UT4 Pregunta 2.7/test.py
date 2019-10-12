@@ -19,7 +19,6 @@ class TestClass:
         for i in range (iteracionesMaximas):
             exponente = random.randint(0, exponenteMaximo)
             resultado = problemaRecursivo(base,exponente)
-            #print(base,exponente,"=",resultado)
             assert resultado == base**exponente
 
     """
@@ -30,7 +29,6 @@ class TestClass:
         for i in range (iteracionesMaximas):
             exponente = random.randint(0, exponenteMaximo)
             resultado = problemaRecursivo(base,exponente)
-            #print(base,exponente,"=",resultado)
             assert resultado == base**exponente
 
     """
