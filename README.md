@@ -27,4 +27,4 @@ pytest test.py -s
 Todo es bienvenido, por favor asegurarse de actualizar los tests cuando sea apropiado.
 
 ## Licencia
-[MIT](https://github.com/JuanFKurucz/TEOCOMP/blob/master/README)
+[MIT](https://github.com/JuanFKurucz/TEOCOMP/blob/master/LICENSE)
