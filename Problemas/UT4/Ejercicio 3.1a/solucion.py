@@ -1,0 +1,41 @@
+import random
+import time
+
+
+def minDeMax(matriz):
+    iteraciones = 0
+    min = float('inf')
+    max = float('-inf')
+    for lista in matriz:
+        iteraciones += 4
+        for i in lista:
+            iteraciones += 4
+            if i>max:
+                max=i
+        if max<min:
+            min = max
+        max = float('-inf')
+    print("Operaciones: %i" % iteraciones)
+    return min
+
+
+def generarLista(cantidadListas,cantidadNumeros,min,max):
+    lista = []
+    for i in range(cantidadListas):
+        lista.append([])
+        for n in range(cantidadNumeros):
+            lista[i].append(random.randint(min, max))
+    return lista
+
+def prueba(listas,numeros):
+    print("Cantidad listas: %i" % listas)
+    print("Cantidad numeros: %i" % numeros)
+    matriz = generarLista(listas,numeros,-100,100)
+    print("Arranco")
+    start_time = time.time()
+    print(start_time)
+    print(minDeMax(matriz))
+    print("--- %s seconds ---" % (time.time() - start_time))
+prueba(200,50)
+prueba(2000,50)
+prueba(20000,50)
