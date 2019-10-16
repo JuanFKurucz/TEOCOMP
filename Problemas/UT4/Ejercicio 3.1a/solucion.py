@@ -7,12 +7,14 @@ def minDeMax(matriz):
     min = float('inf')
     max = float('-inf')
     for lista in matriz:
-        iteraciones += 4
+        iteraciones += 3
         for i in lista:
-            iteraciones += 4
+            iteraciones += 3
             if i>max:
+                iteraciones += 1
                 max=i
         if max<min:
+            iteraciones += 1
             min = max
         max = float('-inf')
     print("Operaciones: %i" % iteraciones)
