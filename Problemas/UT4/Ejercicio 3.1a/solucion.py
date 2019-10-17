@@ -3,21 +3,25 @@ import time
 
 
 def minDeMax(matriz):
-    iteraciones = 0
+    comparaciones = 0
+    asignaciones = 1
     min = float('inf')
-    max = float('-inf')
     for lista in matriz:
-        iteraciones += 4
+        comparaciones += 1
+        asignaciones += 2
+        max = float('-inf')
         for i in lista:
-            iteraciones += 3
+            asignaciones += 1
+            comparaciones += 1
             if i>max:
-                iteraciones += 1
+                asignaciones += 1
+                comparaciones += 1
                 max=i
         if max<min:
-            iteraciones += 1
+            asignaciones += 1
+            comparaciones += 1
             min = max
-        max = float('-inf')
-    print("Operaciones: %i" % iteraciones)
+    print("Comparaciones: %i, Asignaciones: %i, Total: %i" % (comparaciones,asignaciones,(comparaciones+asignaciones)))
     return min
 
 
