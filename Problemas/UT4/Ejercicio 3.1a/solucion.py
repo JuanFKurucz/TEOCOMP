@@ -55,6 +55,8 @@ def prueba(listas,numeros):
     elapsed = elapsed - start
     print("--- %s segundos ---" % (elapsed))
 
-prueba(200,50)
-prueba(2000,50)
-prueba(20000,50)
+for i in range(1,10):
+    prueba(200,50)
+    prueba(2000,50)
+    prueba(20000,50)
+    print("=============================================")
