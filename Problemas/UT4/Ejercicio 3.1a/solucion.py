@@ -34,10 +34,12 @@ def prueba(listas,numeros):
     print("Cantidad numeros: %i" % numeros)
     matriz = generarLista(listas,numeros,-100,100)
     print("Arranco")
-    start_time = time.time()
-    print(start_time)
+    start = time.perf_counter()
     print(minDeMax(matriz))
-    print("--- %s seconds ---" % (time.time() - start_time))
+    elapsed = time.perf_counter()
+    elapsed = elapsed - start
+    print("--- %s segundos ---" % (elapsed))
+
 prueba(200,50)
 prueba(2000,50)
 prueba(20000,50)
