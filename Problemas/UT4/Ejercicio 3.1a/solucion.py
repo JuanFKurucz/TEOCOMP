@@ -2,7 +2,7 @@ import random
 import time
 
 
-def minDeMax(matriz):
+def minDeMaxOutput(matriz):
     comparaciones = 0
     asignaciones = 1
     min = float('inf')
@@ -22,6 +22,17 @@ def minDeMax(matriz):
             comparaciones += 1
             min = max
     print("Comparaciones: %i, Asignaciones: %i, Total: %i" % (comparaciones,asignaciones,(comparaciones+asignaciones)))
+    return min
+
+def minDeMax(matriz):
+    min = float('inf')
+    for lista in matriz:
+        max = float('-inf')
+        for i in lista:
+            if i>max:
+                max=i
+        if max<min:
+            min = max
     return min
 
 
