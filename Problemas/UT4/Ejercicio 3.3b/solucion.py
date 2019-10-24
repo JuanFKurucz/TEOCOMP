@@ -35,21 +35,24 @@ def merge(A,p,q,r):
     j = 1
     for k in range(p,r):
         if L[i] <= R[j]:
+            print(L[i])
             A[k] = L[i]
             i+=1
         else:
+            print("" % (k,j,A[k],R[j]))
             A[k] = R[j]
             j+=1
+        print(A)
 
 def prueba():
     print("=======================")
     tiempos = []
     for i in range(3):
-        lista = generarLista(100000,0,5)
+        lista = generarLista(1000,0,5)
         print(lista)
         start = time.perf_counter()
         #mergeSort(lista,0,len(lista))
-        thirdSort(lista,0,len(lista)-1)
+        #thirdSort(lista,0,len(lista)-1)
         elapsed = time.perf_counter()
         tiempos.append(elapsed - start)
         print(lista)
@@ -63,4 +66,7 @@ def generarLista(cantidadNumeros,min,max):
         lista.append(random.randint(min, max))
     return lista
 
-prueba()
+#prueba()
+lista = [5,1]
+mergeSort(lista,0,len(lista))
+print(lista)
