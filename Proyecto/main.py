@@ -1,6 +1,8 @@
 import itertools
 def comparacionesDimension(dimension):
-    return [list(e) for e in itertools.product(*[[">","<="] for x in range(dimension)])]
+    l=[list(e) for e in itertools.product(*[[">","<="] for x in range(dimension)])]
+    l.sort()
+    return l
 
 def crearArbol(puntos,dimension):
     if not puntos:
@@ -13,7 +15,6 @@ def crearArbol(puntos,dimension):
     print(medianas)
     auxiliares = [[] for x in range(pow(2,len(medianas)))]
     operandos = comparacionesDimension(len(medianas))
-    operandos.sort()
     for i in puntos:
         print("======")
         indice = 0
@@ -37,9 +38,45 @@ def crearArbol(puntos,dimension):
         resultado.append(crearArbol(a,dimension))
     return (medianas,resultado)
 
+def buscar(arbol,punto):
+    if arbol == None:
+        return False
+    if len(arbol) == 1:
+        return punto == arbol[0]
+    operandos = comparacionesDimension(len(punto))
+    mediana = arbol[0]
+    indice = 0
+    for c in operandos:
+        string = []
+        for m in range(len(mediana)):
+            t = str(punto[m])+" "+c[m]+" "+str(mediana[m])
+            string.append(t)
+        works = True
+        for s in string:
+            if not eval(s):
+                works = False
+                break
+        if works:
+            return buscar(arbol[1][indice],punto)
+        indice+=1
+    return False
 
-print(crearArbol(
-    [
-        [2,2],
-        [4,4]
-    ],2))
+arbol = crearArbol(
+[
+    [0,0],
+    [2,2],
+    [2,4],
+    [3,3],
+    [4,4],
+    [5,5]
+],2)
+
+print(arbol)
+print("======BUSQUEDA=======")
+
+print(buscar(arbol,[0,0]))
+print(buscar(arbol,[2,2]))
+print(buscar(arbol,[2,4]))
+print(buscar(arbol,[3,3]))
+print(buscar(arbol,[4,4]))
+print(buscar(arbol,[5,5]))
