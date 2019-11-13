@@ -39,26 +39,67 @@ def searchKDTree(kdTree, point, dim = 0):
 #tree = makeKDTree(points,dimension)
 #print(tree)
 #print(searchKDTree(tree,[2,0],dimension))
-
 import itertools
 def comparacionesDimension(array):
-    return [list(e) for e in itertools.product(*[[">=","<"] for x in range(len(array))])]
+    return [list(e) for e in itertools.product(*[[">","<="] for x in range(len(array))])]
 
-array = [[1,1,1],[3,1,2]]
-mediana = [2,1,0]
-operandos = comparacionesDimension(mediana)
-print(operandos)
-for i in array:
-    for c in operandos:
-        string = []
-        for m in range(len(mediana)):
-            t = str(i[m])+" "+c[m]+" "+str(mediana[m])
-            string.append(t)
-        print("String: "+",".join(string))
-        works = True
-        for s in string:
-            if not eval(s):
-                works = False
-                break
-        print("Resultado: "+str(works))
-    print("====")
+def crearArbol(puntos,dimension):
+    if not puntos:
+        return None # Empty trees are None
+    elif len(puntos) == 1:
+        return tuple(puntos) # Leaf nodes have one point.
+    medianas = []
+    for i in range(dimension):
+        medianas.append(sum([x[i] for x in puntos])//len(puntos))
+    print(medianas)
+    auxiliares = [[] for x in range(pow(2,len(medianas)))]
+    operandos = comparacionesDimension(medianas)
+    operandos.sort()
+    for i in puntos:
+        indice = 0
+        for c in operandos:
+            string = []
+            for m in range(len(medianas)):
+                t = str(i[m])+" "+c[m]+" "+str(medianas[m])
+                string.append(t)
+            works = True
+            for s in string:
+                if not eval(s):
+                    works = False
+                    break
+            if works:
+                auxiliares[indice].append(i)
+            indice+=1
+    resultado = []
+    for a in auxiliares:
+        resultado.append(crearArbol(a,dimension))
+    return resultado
+
+
+print(crearArbol(
+    [
+        [0,0],
+        [1,1],
+        [2,2],
+        [3,3],
+        [4,4]
+    ],2))
+#
+# array = [[1,1,1],[3,1,2]]
+# mediana = [2,1,0]
+# operandos = comparacionesDimension(mediana)
+# print(operandos)
+# for i in array:
+#     for c in operandos:
+#         string = []
+#         for m in range(len(mediana)):
+#             t = str(i[m])+" "+c[m]+" "+str(mediana[m])
+#             string.append(t)
+#         print("String: "+",".join(string))
+#         works = True
+#         for s in string:
+#             if not eval(s):
+#                 works = False
+#                 break
+#         print("Resultado: "+str(works))
+#     print("====")
