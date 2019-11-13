@@ -34,8 +34,31 @@ def searchKDTree(kdTree, point, dim = 0):
     nextTree = left if point[dim] < nodeValue else right
     return searchKDTree(nextTree, point, nextDim)
 
-dimension = 0
-points = [[1,0],[1,1],[2,0],[2,1],[2,2],[3,0],[3,1],[3,2],[3,3],[4,0],[4,1],[4,2],[4,3],[4,4]]
-tree = makeKDTree(points,dimension)
-print(tree)
+#dimension = 0
+#points = [[1,0],[1,1],[2,0],[2,1],[2,2],[3,0],[3,1],[3,2],[3,3],[4,0],[4,1],[4,2],[4,3],[4,4]]
+#tree = makeKDTree(points,dimension)
+#print(tree)
 #print(searchKDTree(tree,[2,0],dimension))
+
+import itertools
+def comparacionesDimension(array):
+    return [list(e) for e in itertools.product(*[[">=","<"] for x in range(len(array))])]
+
+array = [[1,1,1],[3,1,2]]
+mediana = [2,1,0]
+operandos = comparacionesDimension(mediana)
+print(operandos)
+for i in array:
+    for c in operandos:
+        string = []
+        for m in range(len(mediana)):
+            t = str(i[m])+" "+c[m]+" "+str(mediana[m])
+            string.append(t)
+        print("String: "+",".join(string))
+        works = True
+        for s in string:
+            if not eval(s):
+                works = False
+                break
+        print("Resultado: "+str(works))
+    print("====")
