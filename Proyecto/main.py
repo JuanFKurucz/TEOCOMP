@@ -12,11 +12,9 @@ def crearArbol(puntos,dimension):
     medianas = []
     for i in range(dimension):
         medianas.append(sum([x[i] for x in puntos])//len(puntos))
-    print(medianas)
     auxiliares = [[] for x in range(pow(2,len(medianas)))]
     operandos = comparacionesDimension(len(medianas))
     for i in puntos:
-        print("======")
         indice = 0
         for c in operandos:
             string = []
@@ -24,12 +22,10 @@ def crearArbol(puntos,dimension):
                 t = str(i[m])+" "+c[m]+" "+str(medianas[m])
                 string.append(t)
             works = True
-            print(string)
             for s in string:
                 if not eval(s):
                     works = False
                     break
-            print(works)
             if works:
                 auxiliares[indice].append(i)
             indice+=1
@@ -61,22 +57,21 @@ def buscar(arbol,punto):
         indice+=1
     return False
 
-arbol = crearArbol(
-[
-    [0,0],
-    [2,2],
-    [2,4],
-    [3,3],
-    [4,4],
-    [5,5]
-],2)
+import random
+
+random.seed(30)
+puntos = []
+
+dimension = 3
+for i in range(10):
+    p=[]
+    for d in range(dimension):
+        p.append(random.randint(0,40))
+    puntos.append(p)
+
+arbol = crearArbol(puntos,dimension)
 
 print(arbol)
 print("======BUSQUEDA=======")
 
-print(buscar(arbol,[0,0]))
-print(buscar(arbol,[2,2]))
-print(buscar(arbol,[2,4]))
-print(buscar(arbol,[3,3]))
-print(buscar(arbol,[4,4]))
-print(buscar(arbol,[5,5]))
+print(buscar(arbol,[16,3,26]))
