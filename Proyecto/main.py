@@ -4,6 +4,9 @@ def comparacionesDimension(dimension):
     l.sort()
     return l
 
+"""
+    No se pueden tener puntos duplicados en la lista de puntos al momento de crear
+"""
 def crearArbol(puntos,dimension):
     if not puntos:
         return None # Empty trees are None
