@@ -62,16 +62,18 @@ import random
 random.seed(30)
 puntos = []
 
-dimension = 3
-for i in range(10):
-    p=[]
-    for d in range(dimension):
-        p.append(random.randint(0,40))
-    puntos.append(p)
-
+dimension = 2
+for i in range(10000):
+    while True:
+        p=[]
+        for d in range(dimension):
+            p.append(random.randint(0,40000))
+        if p not in puntos:
+            puntos.append(p)
+            break
 arbol = crearArbol(puntos,dimension)
 
 print(arbol)
 print("======BUSQUEDA=======")
 
-print(buscar(arbol,[16,3,26]))
+print(buscar(arbol,[16,3]))
