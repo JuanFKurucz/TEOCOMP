@@ -22,15 +22,16 @@ def crearArbol(puntos,dimension):
     for i in puntos:
         indice = 0
         for c in operandos:
-            string = []
-            for m in range(len(medianas)):
-                t = str(i[m])+" "+c[m]+" "+str(medianas[m])
-                string.append(t)
             works = True
-            for s in string:
-                if not eval(s):
-                    works = False
-                    break
+            for m in range(len(medianas)):
+                if c[m] == ">":
+                    if i[m] <= medianas[m]:
+                        works = False
+                        break
+                else:
+                    if i[m] > medianas[m]:
+                        works = False
+                        break
             if works:
                 auxiliares[indice].append(i)
             indice+=1
@@ -48,16 +49,15 @@ def buscar(arbol,punto,r):
     if len(arbol) == 1:
         return punto == arbol[0]
     operandos = comparacionesDimension(r)
-    mediana = arbol[0]
+    medianas = arbol[0]
     indice = 0
     for c in operandos:
-        string = []
-        for m in range(len(mediana)):
-            t = str(punto[m])+" "+c[m]+" "+str(mediana[m])
-            string.append(t)
         works = True
-        for s in string:
-            if not eval(s):
+        for m in range(len(medianas)):
+            if c[m] == ">" and not (punto[m] > medianas[m]):
+                works = False
+                break
+            elif c[m] == "<=" and not (punto[m] <= medianas[m]):
                 works = False
                 break
         if works:
@@ -68,9 +68,9 @@ def buscar(arbol,punto,r):
 import random
 
 r=3
-for k in [3]:
+for k in [20]:
     print("Start "+str(k))
-    for n in [100000000]:
+    for n in [1000000]:
         random.seed(30)
         print("N "+str(n))
         puntos = []
