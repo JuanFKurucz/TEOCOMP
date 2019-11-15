@@ -68,21 +68,24 @@ def buscar(arbol,punto,r):
 import random
 
 r=3
-for k in [5,10,15,20]:
+for k in [3]:
     print("Start "+str(k))
-    for n in [100000,500000,1000000]:
+    for n in [100000000]:
         random.seed(30)
         print("N "+str(n))
         puntos = []
         start = time.perf_counter()
+
+        pDim = []
+        for d in range(k):
+            choices = list(range(n))
+            random.shuffle(choices)
+            pDim.append(choices)
         for i in range(n):
-            while True:
-                p=[]
-                for d in range(k):
-                    p.append(random.randint(0,10000))
-                if p not in puntos:
-                    puntos.append(p)
-                    break
+            p=[]
+            for d in range(k):
+                p.append(pDim[d][i])
+            puntos.append(p)
         elapsed = time.perf_counter()
         print("--- Generacion puntos %s segundos ---" % (elapsed-start))
         start = time.perf_counter()
@@ -102,6 +105,7 @@ for k in [5,10,15,20]:
         print("--- Busqueda aciertos %s segundos ---" % (sum(tiemposBusquedaAcierto)/len(tiemposBusquedaAcierto)))
         random.seed(70)
         print("Inicio busqueda inciertos")
+
         while i<100:
             while True:
                 p=[]
