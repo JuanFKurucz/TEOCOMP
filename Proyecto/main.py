@@ -108,25 +108,25 @@ for k in [20]:
             elapsed = time.perf_counter()
             tiemposBusquedaAcierto.append(elapsed-start)
         i=0
-        print("--- Busqueda aciertos %s segundos ---" % (sum(tiemposBusquedaAcierto)/len(tiemposBusquedaAcierto)))
-        random.seed(70)
+        resultadoAciertos = sum(tiemposBusquedaAcierto)/len(tiemposBusquedaAcierto)
+        print("--- Busqueda aciertos %s segundos ---" % (resultadoAciertos))
         print("Inicio busqueda inciertos")
-
+        random.seed(70)
         while i<100:
             while True:
                 p=[]
                 for d in range(k):
                     p.append(random.randint(0,10000))
-                if p not in puntos:
+                if not buscar(arbol,p,r):
                     start = time.perf_counter()
                     buscar(arbol,p,r)
                     elapsed = time.perf_counter()
                     tiemposBusquedaIncierta.append(elapsed-start)
                     break
             i+=1
-        print("--- Busqueda inciertos %s segundos ---" % (sum(tiemposBusquedaIncierta)/len(tiemposBusquedaIncierta)))
-        print("--- Busqueda total %s segundos ---" % ((sum(tiemposBusquedaAcierto)+sum(tiemposBusquedaIncierta))/(len(tiemposBusquedaIncierta)+len(tiemposBusquedaAcierto))))
-        print(" === ")
 
-#print("======BUSQUEDA=======")
-#print(buscar(arbol,[4760,10479]))
+        resultadoInciertos = sum(tiemposBusquedaIncierta)/len(tiemposBusquedaIncierta)
+        print("--- Busqueda inciertos %s segundos ---" % (resultadoInciertos))
+        resultadoTotales = (resultadoInciertos+resultadoAciertos)/2
+        print("--- Busqueda total %s segundos ---" % (resultadoTotales))
+        print(" === ")
