@@ -68,9 +68,13 @@ def buscar(arbol,punto,r):
 import random
 
 r=3
-for k in [20]:
-    print("Start "+str(k))
-    for n in [1000000]:
+for k in range(1,21):
+    if k<3:
+        r=k
+    else:
+        r=3
+    print("Start "+str(k)+" using "+str(r))
+    for n in [10]:
         random.seed(30)
         print("N "+str(n))
         puntos = []
