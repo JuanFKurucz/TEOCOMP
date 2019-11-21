@@ -1,5 +1,6 @@
 import time
 import itertools
+import random
 
 MAYOR = 0
 MENORIGUAL = 1
@@ -67,16 +68,31 @@ def buscarRecursivo(arbol,punto,operandos,largoOperandos,dimension):
             return buscarRecursivo(arbol[1][c],punto,operandos,largoOperandos,dimension)
     return False
 
-import random
+def makeKDTree(points, dim = 0):
+    if not points:
+        return None # Empty trees are None
+    elif len(points) == 1:
+        return tuple(points) # Leaf nodes have one point.
+    points.sort(key = lambda p: p[dim])
+    medianIndex = len(points) // 2
+    median = points[medianIndex][dim]
+    nextDim = (dim + 1) % len(points[medianIndex])
+    left = [p for p in points if p[dim] < median]
+    right = [p for p in points if p[dim] >= median]
+    return (median, makeKDTree(left, nextDim), makeKDTree(right, nextDim))
+
+def searchKDTree(kdTree, point, dim = 0):
+    if len(kdTree) == 1:
+        return kdTree[0] == point
+    nodeValue, left, right = kdTree
+    nextDim = (dim + 1) % len(point)
+    nextTree = left if point[dim] < nodeValue else right
+    return searchKDTree(nextTree, point, nextDim)
 
 r=3
-for k in [20]:
-    if k<3:
-        r=k
-    else:
-        r=3
+for k in [5,10,15,20]:
     print("Start "+str(k)+" using "+str(r))
-    for n in [1000000]:
+    for n in [100000,500000,1000000]:
         random.seed(30)
         print("N "+str(n))
         puntos = []
@@ -99,6 +115,11 @@ for k in [20]:
         elapsed = time.perf_counter()
         print("--- Creacion arbol %s segundos ---" % (elapsed-start))
 
+        start = time.perf_counter()
+        arbolCatedra = makeKDTree(puntos,r)
+        elapsed = time.perf_counter()
+        print("--- Creacion arbol CATEDRA %s segundos ---" % (elapsed-start))
+
         tiemposBusquedaAcierto=[]
         tiemposBusquedaIncierta=[]
         print("Inicio busqueda aciertos")
@@ -107,10 +128,21 @@ for k in [20]:
             buscar(arbol,puntos[p],r)
             elapsed = time.perf_counter()
             tiemposBusquedaAcierto.append(elapsed-start)
-        i=0
         resultadoAciertos = sum(tiemposBusquedaAcierto)/len(tiemposBusquedaAcierto)
         print("--- Busqueda aciertos %s segundos ---" % (resultadoAciertos))
+
+        tiemposBusquedaAciertoCatedra=[]
+        tiemposBusquedaInciertaCatedra=[]
+        for p in range(100):
+            start = time.perf_counter()
+            searchKDTree(arbolCatedra,puntos[p],r)
+            elapsed = time.perf_counter()
+            tiemposBusquedaAciertoCatedra.append(elapsed-start)
+        resultadoAciertosCatedra = sum(tiemposBusquedaAciertoCatedra)/len(tiemposBusquedaAciertoCatedra)
+        print("--- Busqueda aciertos CATEDRA %s segundos ---" % (resultadoAciertosCatedra))
+
         print("Inicio busqueda inciertos")
+        i=0
         random.seed(70)
         while i<100:
             while True:
@@ -127,6 +159,28 @@ for k in [20]:
 
         resultadoInciertos = sum(tiemposBusquedaIncierta)/len(tiemposBusquedaIncierta)
         print("--- Busqueda inciertos %s segundos ---" % (resultadoInciertos))
+
+        i=0
+        random.seed(70)
+        while i<100:
+            while True:
+                p=[]
+                for d in range(k):
+                    p.append(random.randint(0,10000))
+                if not searchKDTree(arbolCatedra,p,r):
+                    start = time.perf_counter()
+                    searchKDTree(arbolCatedra,p,r)
+                    elapsed = time.perf_counter()
+                    tiemposBusquedaInciertaCatedra.append(elapsed-start)
+                    break
+            i+=1
+
+        resultadoInciertosCatedra = sum(tiemposBusquedaInciertaCatedra)/len(tiemposBusquedaInciertaCatedra)
+        print("--- Busqueda inciertos CATEDRA %s segundos ---" % (resultadoInciertosCatedra))
+
         resultadoTotales = (resultadoInciertos+resultadoAciertos)/2
         print("--- Busqueda total %s segundos ---" % (resultadoTotales))
+
+        resultadoTotalesCatedra = (resultadoInciertosCatedra+resultadoAciertosCatedra)/2
+        print("--- Busqueda total CATEDRA %s segundos ---" % (resultadoTotalesCatedra))
         print(" === ")
