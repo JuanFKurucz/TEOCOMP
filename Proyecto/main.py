@@ -84,13 +84,15 @@ def buscarRecursivo(arbol,punto,dimension,operandos):
         indicePunto+=1
     return buscarRecursivo(arbol[1][operandos[indiceCaja]],punto,dimension,operandos)
 
-for r in range(2,10):
+for r in range(1,11):
     repeticiones = 100
     debug = False
-    for k in [20]:
+    for k in [5,10,15,20]:
+        if r>=k:
+            continue
         random.seed(30)
         print("Start "+str(k)+" using "+str(r))
-        cantidadNumeros = [100000]
+        cantidadNumeros = [100000,500000,1000000]
         puntosGeneral = []
         start = time.perf_counter()
         n=max(cantidadNumeros)
