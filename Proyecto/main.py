@@ -39,9 +39,9 @@ def comparacionesDimension(dimension):
 """
 def crearArbol(puntos,dimension):
     operandos = comparacionesDimension(dimension)
-    return crearArbolRecursivo(puntos,dimension,range(len(operandos)))
+    return crearArbolRecursivo(puntos,dimension,operandos,range(pow(2,dimension)))
 
-def crearArbolRecursivo(puntos,dimension,rangoOperandos):
+def crearArbolRecursivo(puntos,dimension,operandos,rangoOperandos):
     if not puntos or len(puntos)==0:
         return []
     elif len(puntos) == 1:
@@ -56,9 +56,9 @@ def crearArbolRecursivo(puntos,dimension,rangoOperandos):
             if i[p] < medianas[p]:
                 m-=1
             p+=1
-        auxiliares[m].append(i)
-    resultado = [crearArbolRecursivo(a,dimension,rangoOperandos) for a in auxiliares]
-    return [medianas,resultado]
+        auxiliares[operandos[m]].append(i)
+    resultado = [crearArbolRecursivo(a,dimension,operandos,rangoOperandos) for a in auxiliares]
+    return (medianas,resultado)
 
 """
     (2^r)*r
@@ -66,29 +66,31 @@ def crearArbolRecursivo(puntos,dimension,rangoOperandos):
 def buscar(arbol,punto):
     if punto == None:
         return False
-    return buscarRecursivo(arbol,punto,len(arbol[0]))
+    dim = len(arbol[0])
+    operandos = comparacionesDimension(dim)
+    return buscarRecursivo(arbol,punto,dim,operandos)
 
-def buscarRecursivo(arbol,punto,d):
+def buscarRecursivo(arbol,punto,dimension,operandos):
     if not arbol:
         return False
     elif len(arbol) == 1:
         return punto == arbol[0]
-    m=0
-    p=0
-    while p<d:
-        m=2*m+2
-        if punto[p] < arbol[0][p]:
-            m-=1
-        p+=1
-    return buscarRecursivo(arbol[1][m],punto,d)
+    indiceCaja=0
+    indicePunto=0
+    while indicePunto<dimension:
+        indiceCaja=2*indiceCaja+2
+        if punto[indicePunto] < arbol[0][indicePunto]:
+            indiceCaja-=1
+        indicePunto+=1
+    return buscarRecursivo(arbol[1][operandos[indiceCaja]],punto,dimension,operandos)
 
-r=3
+r=2
 repeticiones = 100
 debug = False
-for k in [20]:
+for k in [3]:
     random.seed(30)
     print("Start "+str(k)+" using "+str(r))
-    cantidadNumeros = [100000]
+    cantidadNumeros = [1000000]
     puntosGeneral = []
     start = time.perf_counter()
     n=max(cantidadNumeros)
