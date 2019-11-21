@@ -39,26 +39,25 @@ def comparacionesDimension(dimension):
 """
 def crearArbol(puntos,dimension):
     operandos = comparacionesDimension(dimension)
-    return crearArbolRecursivo(puntos,dimension,operandos,range(len(operandos)),range(dimension))
+    return crearArbolRecursivo(puntos,dimension,range(len(operandos)))
 
-def crearArbolRecursivo(puntos,dimension,operandos,rangoOperandos,rangoDimension):
-    if not puntos:
+def crearArbolRecursivo(puntos,dimension,rangoOperandos):
+    if not puntos or len(puntos)==0:
         return []
     elif len(puntos) == 1:
         return puntos
-    largoPuntos = len(puntos)
-    medianas = [sum([x[i] for x in puntos])//largoPuntos for i in rangoDimension]
+    medianas = puntos[len(puntos)//2][:dimension]
     auxiliares = [[] for x in rangoOperandos]
     for i in puntos:
         m=0
         p=0
         while p<dimension:
             m=2*m+2
-            if i[p] > medianas[p]:
+            if i[p] < medianas[p]:
                 m-=1
             p+=1
         auxiliares[m].append(i)
-    resultado = [crearArbolRecursivo(a,dimension,operandos,rangoOperandos,rangoDimension) for a in auxiliares]
+    resultado = [crearArbolRecursivo(a,dimension,rangoOperandos) for a in auxiliares]
     return [medianas,resultado]
 
 """
@@ -67,29 +66,29 @@ def crearArbolRecursivo(puntos,dimension,operandos,rangoOperandos,rangoDimension
 def buscar(arbol,punto):
     if punto == None:
         return False
-    return buscarRecursivo(arbol,punto)
+    return buscarRecursivo(arbol,punto,len(arbol[0]))
 
-def buscarRecursivo(arbol,punto):
+def buscarRecursivo(arbol,punto,d):
     if not arbol:
         return False
     elif len(arbol) == 1:
         return punto == arbol[0]
     m=0
     p=0
-    while p<r:
+    while p<d:
         m=2*m+2
-        if punto[p] > arbol[0][p]:
+        if punto[p] < arbol[0][p]:
             m-=1
         p+=1
-    return buscarRecursivo(arbol[1][m],punto)
+    return buscarRecursivo(arbol[1][m],punto,d)
 
 r=3
 repeticiones = 100
 debug = False
-for k in [5,10,15,20]:
+for k in [20]:
     random.seed(30)
     print("Start "+str(k)+" using "+str(r))
-    cantidadNumeros = [100000,500000,1000000]
+    cantidadNumeros = [100000]
     puntosGeneral = []
     start = time.perf_counter()
     n=max(cantidadNumeros)
@@ -103,6 +102,7 @@ for k in [5,10,15,20]:
         for d in range(k):
             p.append(pDim[d][i])
         puntosGeneral.append(p)
+    puntosGeneral.sort()
     elapsed = time.perf_counter()
     print("--- Generacion puntos %s segundos ---" % (elapsed-start))
 
@@ -113,14 +113,14 @@ for k in [5,10,15,20]:
         elapsed = time.perf_counter()
         print("--- Obtener "+str(len(puntos))+" puntos %s segundos ---" % (elapsed-start))
         tiemposCreacion=[]
-        for i in range(repeticiones):
+        for i in range(1):#repeticiones):
             start = time.perf_counter()
             arbol = crearArbol(puntos,r)
             elapsed = time.perf_counter()
             tiemposCreacion.append(elapsed-start)
         print("--- Creacion arbol %s segundos ---" % (sum(tiemposCreacion)/len(tiemposCreacion)))
         tiemposCreacionCatedra=[]
-        for i in range(repeticiones):
+        for i in range(1):#repeticiones):Z
             start = time.perf_counter()
             arbolCatedra = makeKDTree(puntos,r)
             elapsed = time.perf_counter()
