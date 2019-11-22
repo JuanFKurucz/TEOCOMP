@@ -33,107 +33,128 @@ def comparacionesDimension(dimension):
     return l
 
 
+def encontrarRecursivo(mediana,punto,inicioDimension,dimension):
+    indiceCaja=0
+    for indicePunto in range(dimension):
+        indiceReal = (indicePunto+inicioDimension)%(len(punto))
+        indiceCaja*=2
+        if punto[indiceReal] < mediana[indicePunto]:
+            indiceCaja+=1
+        else:
+            indiceCaja+=2
+    return indiceCaja
+
 """
     n*(2^r)*r
     No se pueden tener puntos duplicados en la lista de puntos al momento de crear
 """
 def crearArbol(puntos,dimension):
+    puntos.sort()
     operandos = comparacionesDimension(dimension)
-    return [operandos,crearArbolRecursivo(puntos,dimension,operandos,range(pow(2,dimension)))]
+    return (operandos,crearArbolRecursivo(puntos,0,dimension,operandos,range(pow(2,dimension))))
 
-def crearArbolRecursivo(puntos,dimension,operandos,rangoOperandos):
+def crearArbolRecursivo(puntos,inicioDimension,dimension,operandos,rangoOperandos):
     if not puntos or len(puntos)==0:
         return []
     elif len(puntos) == 1:
         return puntos
-    medianas = puntos[len(puntos)//2][:dimension]
+    indiceMedio = len(puntos)//2
+    medianas = []
+    for i in range(dimension):
+        medianas.append(puntos[indiceMedio][(inicioDimension+i)%len(puntos[indiceMedio])])
     auxiliares = [[] for x in rangoOperandos]
     for i in puntos:
-        m=0
-        p=0
-        while p<dimension:
-            m=2*m+2
-            if i[p] < medianas[p]:
-                m-=1
-            p+=1
-        auxiliares[operandos[m]].append(i)
-    resultado = [crearArbolRecursivo(a,dimension,operandos,rangoOperandos) for a in auxiliares]
-    return (medianas,resultado)
+        auxiliares[operandos[encontrarRecursivo(medianas,i,inicioDimension,dimension)]].append(i)
+    nextDimension = (inicioDimension + 1) % len(puntos[indiceMedio])
+    resultado = [crearArbolRecursivo(a,nextDimension,dimension,operandos,rangoOperandos) for a in auxiliares]
+    return [medianas,resultado]
 
 """
     (2^r)*r
 """
 def buscar(arbol,punto):
-    if punto == None:
-        return False
-    dim = len(arbol[1][0])
-    operandos = arbol[0]
-    return buscarRecursivo(arbol[1],punto,dim,operandos)
+    return buscarRecursivo(arbol[1],punto,0,len(arbol[1][0]),arbol[0])
 
-def buscarRecursivo(arbol,punto,dimension,operandos):
+def buscarRecursivo(arbol,punto,inicioDimension,dimension,operandos):
     if not arbol:
         return False
     elif len(arbol) == 1:
         return punto == arbol[0]
-    indiceCaja=0
-    indicePunto=0
-    while indicePunto<dimension:
-        indiceCaja=2*indiceCaja+2
-        if punto[indicePunto] < arbol[0][indicePunto]:
-            indiceCaja-=1
-        indicePunto+=1
-    return buscarRecursivo(arbol[1][operandos[indiceCaja]],punto,dimension,operandos)
+    else:
+        return buscarRecursivo(arbol[1][operandos[encontrarRecursivo(arbol[0],punto,inicioDimension,dimension)]],punto,inicioDimension+1,dimension,operandos)
 
-for r in range(1,11):
-    repeticiones = 100
-    debug = False
-    for k in [5,10,15,20]:
-        if r>=k:
-            continue
-        random.seed(30)
-        print("Start "+str(k)+" using "+str(r))
-        cantidadNumeros = [100000,500000,1000000]
-        puntosGeneral = []
-        start = time.perf_counter()
-        n=max(cantidadNumeros)
-        pDim = []
-        for d in range(k):
-            choices = list(range(n))
-            random.shuffle(choices)
-            pDim.append(choices)
-        for i in range(n):
+print("r,k,n,creacionArbol,creacionArbolCatedra,resultadoAciertos,resultadoAciertosCatedra,resultadoInciertos,resultadoInciertosCatedra,resultadoTotales,resultadoTotalesCatedra")
+repeticiones = 100
+debug = False
+cantidadNumeros = [100000,500000,1000000]
+repeticionesCreacion = 1
+for k in [5,10,15,20]:
+    random.seed(30)
+    print("Creando puntos")
+    puntosGeneral = []
+    start = time.perf_counter()
+    maxCantidadNumeros = max(cantidadNumeros)
+    for i in range(maxCantidadNumeros):
+        while True:
             p=[]
             for d in range(k):
-                p.append(pDim[d][i])
-            puntosGeneral.append(p)
-        puntosGeneral.sort()
+                p.append(random.randint(0,maxCantidadNumeros))
+            if p not in puntosGeneral:
+                puntosGeneral.append(p)
+                break
+    elapsed = time.perf_counter()
+    print("Creacion puntos %s",(elapsed-strart))
+    for n in cantidadNumeros:
+        print("Obteniendo puntos")
+        start = time.perf_counter()
+        puntos = puntosGeneral[:n]
         elapsed = time.perf_counter()
-        print("--- Generacion puntos %s segundos ---" % (elapsed-start))
-
-        for n in cantidadNumeros:
-            print("N "+str(n))
+        tiempoObtenerPuntos = (elapsed-start)
+        tiemposCreacionCatedra=[]
+        tiemposBusquedaAciertoCatedra=[]
+        tiemposBusquedaInciertaCatedra=[]
+        print("Creando arbol CATEDRA")
+        for i in range(repeticionesCreacion):
             start = time.perf_counter()
-            puntos = puntosGeneral[:n]
+            arbolCatedra = makeKDTree(puntos)
             elapsed = time.perf_counter()
-            print("--- Obtener "+str(len(puntos))+" puntos %s segundos ---" % (elapsed-start))
+            tiemposCreacionCatedra.append(elapsed-start)
+        print("Buscando True CATEDRA")
+        for p in range(repeticiones):
+            start = time.perf_counter()
+            if debug:
+                print(searchKDTree(arbolCatedra,puntos[p]))
+            searchKDTree(arbolCatedra,puntos[p])
+            elapsed = time.perf_counter()
+            tiemposBusquedaAciertoCatedra.append(elapsed-start)
+        print("Buscando False CATEDRA")
+        i=0
+        random.seed(70)
+        while i<repeticiones:
+            while True:
+                p=[]
+                for d in range(k):
+                    p.append(random.randint(0,10000))
+                if not searchKDTree(arbolCatedra,p):
+                    if debug:
+                        print(searchKDTree(arbolCatedra,p))
+                    start = time.perf_counter()
+                    searchKDTree(arbolCatedra,p)
+                    elapsed = time.perf_counter()
+                    tiemposBusquedaInciertaCatedra.append(elapsed-start)
+                    break
+            i+=1
+        for r in range(1,6):
             tiemposCreacion=[]
-            for i in range(1):#repeticiones):
+            tiemposBusquedaAcierto=[]
+            tiemposBusquedaIncierta=[]
+            print("Creando arbol")
+            for i in range(repeticionesCreacion):
                 start = time.perf_counter()
                 arbol = crearArbol(puntos,r)
                 elapsed = time.perf_counter()
                 tiemposCreacion.append(elapsed-start)
-            print("--- Creacion arbol %s segundos ---" % (sum(tiemposCreacion)/len(tiemposCreacion)))
-            tiemposCreacionCatedra=[]
-            for i in range(1):#repeticiones):Z
-                start = time.perf_counter()
-                arbolCatedra = makeKDTree(puntos,r)
-                elapsed = time.perf_counter()
-                tiemposCreacionCatedra.append(elapsed-start)
-            print("--- Creacion arbol CATEDRA %s segundos ---" % (sum(tiemposCreacionCatedra)/len(tiemposCreacionCatedra)))
-            #r-=1
-            tiemposBusquedaAcierto=[]
-            tiemposBusquedaIncierta=[]
-            print("Inicio busqueda aciertos")
+            print("Buscando True")
             for p in range(repeticiones):
                 if debug:
                     print(buscar(arbol,puntos[p]))
@@ -141,25 +162,10 @@ for r in range(1,11):
                 buscar(arbol,puntos[p])
                 elapsed = time.perf_counter()
                 tiemposBusquedaAcierto.append(elapsed-start)
-            resultadoAciertos = sum(tiemposBusquedaAcierto)/len(tiemposBusquedaAcierto)
-            print("--- Busqueda aciertos %s segundos ---" % (resultadoAciertos))
-
-            tiemposBusquedaAciertoCatedra=[]
-            tiemposBusquedaInciertaCatedra=[]
-            for p in range(repeticiones):
-                start = time.perf_counter()
-                if debug:
-                    print(searchKDTree(arbolCatedra,puntos[p],r))
-                searchKDTree(arbolCatedra,puntos[p],r)
-                elapsed = time.perf_counter()
-                tiemposBusquedaAciertoCatedra.append(elapsed-start)
-            resultadoAciertosCatedra = sum(tiemposBusquedaAciertoCatedra)/len(tiemposBusquedaAciertoCatedra)
-            print("--- Busqueda aciertos CATEDRA %s segundos ---" % (resultadoAciertosCatedra))
-
-            print("Inicio busqueda inciertos")
+            print("Buscando False")
             i=0
             random.seed(70)
-            while i<repeticiones:#0:
+            while i<repeticiones:
                 while True:
                     p=[]
                     for d in range(k):
@@ -173,33 +179,12 @@ for r in range(1,11):
                         tiemposBusquedaIncierta.append(elapsed-start)
                         break
                 i+=1
-
+            resultadoAciertos = sum(tiemposBusquedaAcierto)/len(tiemposBusquedaAcierto)
+            resultadoAciertosCatedra = sum(tiemposBusquedaAciertoCatedra)/len(tiemposBusquedaAciertoCatedra)
             resultadoInciertos = sum(tiemposBusquedaIncierta)/len(tiemposBusquedaIncierta)
-            print("--- Busqueda inciertos %s segundos ---" % (resultadoInciertos))
-
-            i=0
-            random.seed(70)
-            while i<repeticiones:
-                while True:
-                    p=[]
-                    for d in range(k):
-                        p.append(random.randint(0,10000))
-                    if not searchKDTree(arbolCatedra,p,r):
-                        if debug:
-                            print(searchKDTree(arbolCatedra,p,r))
-                        start = time.perf_counter()
-                        searchKDTree(arbolCatedra,p,r)
-                        elapsed = time.perf_counter()
-                        tiemposBusquedaInciertaCatedra.append(elapsed-start)
-                        break
-                i+=1
-
             resultadoInciertosCatedra = sum(tiemposBusquedaInciertaCatedra)/len(tiemposBusquedaInciertaCatedra)
-            print("--- Busqueda inciertos CATEDRA %s segundos ---" % (resultadoInciertosCatedra))
-
             resultadoTotales = (resultadoInciertos+resultadoAciertos)/2
-            print("--- Busqueda total %s segundos ---" % (resultadoTotales))
-
             resultadoTotalesCatedra = (resultadoInciertosCatedra+resultadoAciertosCatedra)/2
-            print("--- Busqueda total CATEDRA %s segundos ---" % (resultadoTotalesCatedra))
-            print(" === ")
+            creacionArbol = sum(tiemposCreacion)/len(tiemposCreacion)
+            creacionArbolCatedra = sum(tiemposCreacionCatedra)/len(tiemposCreacionCatedra)
+            print("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s"%(r,k,n,creacionArbol,creacionArbolCatedra,resultadoAciertos,resultadoAciertosCatedra,resultadoInciertos,resultadoInciertosCatedra,resultadoTotales,resultadoTotalesCatedra))
