@@ -2,7 +2,6 @@ import time
 import itertools
 import random
 
-MAYOR = None
 def searchKDTree(kdTree, point, dim = 0):
     if len(kdTree) == 1:
         return kdTree[0] == point
@@ -25,15 +24,44 @@ def makeKDTree(points, dim = 0):
     return (median, makeKDTree(left, nextDim), makeKDTree(right, nextDim))
 
 def comparacionesDimension(dimension):
+    """
+        Se crea un arbol binario en una lista
+        Se ingresa vacio que en los nodos internos
+        Se ingresan numeros del 1 a 2^r en las hojas
+
+        Este arbol simula la estructura de comparaciones y contiene mas que suficiente para alcanzar
+        estas.
+        Las hojas son los indices de caja, ver comentario de encontrarRecursivo para entender esta estructura
+    """
     l=[]
     for i in range(pow(2,dimension)-1):
-        l.append(MAYOR)
+        l.append(None)
     for i in range(pow(2,dimension)):
         l.append(i)
     return l
 
 
 def encontrarRecursivo(mediana,punto,inicioDimension,dimension):
+    """
+        Funcion que encuentra un indice de caja dada una mediana, un punto y un rango de dimension (inicio y dimension). Dimension en este caso jugaria el rol de largo.
+
+        Se entiende que las operaciones se pueden calcular como un arbol binario por eje. Es decir
+        Un ejemplo para dimension 3
+
+        Mediana x,y,z
+        Punto a,b,c
+        1.Se pregunta a < x
+        2.Se pregunta b < y
+        3.Se pregunta c < z
+                          x
+                    <              >=
+                y                        y
+            <     >=                <        >=
+        z              z          z               z
+     <     >=      <      >=   <     >=       <      >=
+     0     1       2      3    4      5       6       7
+        Con esto es mas que suficiente para saber la caja en la que deberia estar.
+    """
     indiceCaja=0
     for indicePunto in range(dimension):
         indiceReal = (indicePunto+inicioDimension)%(len(punto))
@@ -49,11 +77,27 @@ def encontrarRecursivo(mediana,punto,inicioDimension,dimension):
     No se pueden tener puntos duplicados en la lista de puntos al momento de crear
 """
 def crearArbol(puntos,dimension):
+    """
+        Funcion principal que crea un arbol kdr
+        1. Se ordenan los puntos dados
+        2. Se genera un arbol binario de comparaciones, donde las comparaciones se entienden por ser < y las hojas son indices de cajas
+        3. Se llama a la funcion crearArbolRecursivo con los puntos ordenados, el inicioDimension 0, la dimension pedida, los operandos y el rango de operandos (comparaciones (2^r))
+        4. Se retorna el par operandos y arbol para evitar tener que calcular operandos en las busquedas
+    """
     puntos.sort()
     operandos = comparacionesDimension(dimension)
     return (operandos,crearArbolRecursivo(puntos,0,dimension,operandos,range(pow(2,dimension))))
 
 def crearArbolRecursivo(puntos,inicioDimension,dimension,operandos,rangoOperandos):
+    """
+        Creacion recursiva de un arbol KDR
+        1. Se chequean los casos bases de si la lista de puntos dados esta vacia se devuelve una lista vacia y si es un punto se crea la hoja
+        2. Se encuentra el punto medio de la lista de puntos y se obtiene la mediana actual a partir de la profunidad del arbol en la que se este y se generan los nodos hijos (auxiliares).
+        3. Por cada punto se llama a la funcion encontrarRecursivo la cual retorna el indice el numero de hoja de operandos que retornara el indice de la caja real en donde poner el punto.
+        5. Se suma uno al inicio de dimension buscando que sea circular
+        6. Para cada caja se llama a la recursion de crear el arbol
+        7. Se retorna el par mediana e hijos (no es necesario incluir el inicio de dimension ya que va de la mano de la profundidad)
+    """
     if not puntos or len(puntos)==0:
         return []
     elif len(puntos) == 1:
@@ -73,9 +117,27 @@ def crearArbolRecursivo(puntos,inicioDimension,dimension,operandos,rangoOperando
     (2^r)*r
 """
 def buscar(arbol,punto):
+    """
+        Funcion que busca un punto en un arbol
+        Es encargada de desglozar la informacion del arbol para la funcion recursiva
+
+        Se sabe que un arbol tiene en su poicion [0] los operadores
+        En su posicion [1] el arbol en si
+        Se inicia el corte de dimension en 0
+        Se obtiene la dimension del arbol desde la primera mediana del arbol (raiz).
+    """
     return buscarRecursivo(arbol[1],punto,0,len(arbol[1][0]),arbol[0])
 
 def buscarRecursivo(arbol,punto,inicioDimension,dimension,operandos):
+    """
+        Funcion recursiva que busca encontrar un punto en el arbol
+        Caso base 1. que la hoja en la que se este sea vacia o no exista
+        Caso base 2. que la hoja tenga un solo elemento, se compara este elemento contra el punto
+        Si no
+            1. Se busca en que caja deberia estar ubicado el punto buscado acorde a la mediana actual (arbol[0] es la mediana actual) (se hace uso de encontrarRecursivo para encontrar el indice de caja)
+            2. Con este indice de caja de operandos se retorna el valor real de la hoja de operandos
+            3. Se llama a buscar recursivo con los puntos del nodo adecuado con los mismos valores anteriores pero se le suma uno a inicio de dimension para mover el chequeo
+    """
     if not arbol:
         return False
     elif len(arbol) == 1:
