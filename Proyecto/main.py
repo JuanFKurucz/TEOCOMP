@@ -91,19 +91,14 @@ repeticionesCreacion = 1
 for k in [5,10,15,20]:
     random.seed(30)
     print("Creando puntos")
-    puntosGeneral = []
     start = time.perf_counter()
     maxCantidadNumeros = max(cantidadNumeros)
-    for i in range(maxCantidadNumeros):
-        while True:
-            p=[]
-            for d in range(k):
-                p.append(random.randint(0,maxCantidadNumeros))
-            if p not in puntosGeneral:
-                puntosGeneral.append(p)
-                break
+    puntosGeneral = {(random.randint(0, maxCantidadNumeros), random.randint(0, maxCantidadNumeros)) for i in range(maxCantidadNumeros)}
+    while len(puntosGeneral) < maxCantidadNumeros:
+        puntosGeneral |= {(random.randint(0, maxCantidadNumeros), random.randint(0, maxCantidadNumeros))}
+    puntosGeneral = list(list(x) for x in puntosGeneral)
     elapsed = time.perf_counter()
-    print("Creacion puntos %s",(elapsed-strart))
+    print("Creacion %s puntos %s"%(len(puntosGeneral),elapsed-start))
     for n in cantidadNumeros:
         print("Obteniendo puntos")
         start = time.perf_counter()
