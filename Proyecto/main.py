@@ -31,7 +31,7 @@ def comparacionesDimension(dimension):
 
         Este arbol simula la estructura de comparaciones y contiene mas que suficiente para alcanzar
         estas.
-        Las hojas son los indices de caja, ver comentario de encontrarRecursivo para entender esta estructura
+        Las hojas son los indices de caja, ver comentario de encontrarCaja para entender esta estructura
     """
     l=[]
     for i in range(pow(2,dimension)-1):
@@ -41,7 +41,7 @@ def comparacionesDimension(dimension):
     return l
 
 
-def encontrarRecursivo(mediana,punto,inicioDimension,dimension):
+def encontrarCaja(mediana,punto,inicioDimension,dimension):
     """
         Funcion que encuentra un indice de caja dada una mediana, un punto y un rango de dimension (inicio y dimension). Dimension en este caso jugaria el rol de largo.
 
@@ -93,7 +93,7 @@ def crearArbolRecursivo(puntos,inicioDimension,dimension,operandos,rangoOperando
         Creacion recursiva de un arbol KDR
         1. Se chequean los casos bases de si la lista de puntos dados esta vacia se devuelve una lista vacia y si es un punto se crea la hoja
         2. Se encuentra el punto medio de la lista de puntos y se obtiene la mediana actual a partir de la profunidad del arbol en la que se este y se generan los nodos hijos (auxiliares).
-        3. Por cada punto se llama a la funcion encontrarRecursivo la cual retorna el indice el numero de hoja de operandos que retornara el indice de la caja real en donde poner el punto.
+        3. Por cada punto se llama a la funcion encontrarCaja la cual retorna el indice el numero de hoja de operandos que retornara el indice de la caja real en donde poner el punto.
         5. Se suma uno al inicio de dimension buscando que sea circular
         6. Para cada caja se llama a la recursion de crear el arbol
         7. Se retorna el par mediana e hijos (no es necesario incluir el inicio de dimension ya que va de la mano de la profundidad)
@@ -108,7 +108,7 @@ def crearArbolRecursivo(puntos,inicioDimension,dimension,operandos,rangoOperando
         medianas.append(puntos[indiceMedio][(inicioDimension+i)%len(puntos[indiceMedio])])
     auxiliares = [[] for x in rangoOperandos]
     for i in puntos:
-        auxiliares[operandos[encontrarRecursivo(medianas,i,inicioDimension,dimension)]].append(i)
+        auxiliares[operandos[encontrarCaja(medianas,i,inicioDimension,dimension)]].append(i)
     nextDimension = (inicioDimension + 1) % len(puntos[indiceMedio])
     resultado = [crearArbolRecursivo(a,nextDimension,dimension,operandos,rangoOperandos) for a in auxiliares]
     return [medianas,resultado]
@@ -134,7 +134,7 @@ def buscarRecursivo(arbol,punto,inicioDimension,dimension,operandos):
         Caso base 1. que la hoja en la que se este sea vacia o no exista
         Caso base 2. que la hoja tenga un solo elemento, se compara este elemento contra el punto
         Si no
-            1. Se busca en que caja deberia estar ubicado el punto buscado acorde a la mediana actual (arbol[0] es la mediana actual) (se hace uso de encontrarRecursivo para encontrar el indice de caja)
+            1. Se busca en que caja deberia estar ubicado el punto buscado acorde a la mediana actual (arbol[0] es la mediana actual) (se hace uso de encontrarCaja para encontrar el indice de caja)
             2. Con este indice de caja de operandos se retorna el valor real de la hoja de operandos
             3. Se llama a buscar recursivo con los puntos del nodo adecuado con los mismos valores anteriores pero se le suma uno a inicio de dimension para mover el chequeo
     """
@@ -143,7 +143,7 @@ def buscarRecursivo(arbol,punto,inicioDimension,dimension,operandos):
     elif len(arbol) == 1:
         return punto == arbol[0]
     else:
-        return buscarRecursivo(arbol[1][operandos[encontrarRecursivo(arbol[0],punto,inicioDimension,dimension)]],punto,inicioDimension+1,dimension,operandos)
+        return buscarRecursivo(arbol[1][operandos[encontrarCaja(arbol[0],punto,inicioDimension,dimension)]],punto,inicioDimension+1,dimension,operandos)
 
 print("r,k,n,creacionArbol,creacionArbolCatedra,resultadoAciertos,resultadoAciertosCatedra,resultadoInciertos,resultadoInciertosCatedra,resultadoTotales,resultadoTotalesCatedra")
 repeticiones = 100
